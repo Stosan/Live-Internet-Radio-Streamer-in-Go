@@ -1,23 +1,24 @@
 package infrastructure
 
 import (
-	"fmt"
-	"io/ioutil"
+	"os"
 )
 
 // FileWriter provides functionality to write data to a file.
-type FileWriter struct{}
+type BufferWriter struct{}
 
-// NewFileWriter creates a new instance of FileWriter.
-func NewFileWriter() *FileWriter {
-	return &FileWriter{}
+// NewBufferWriter creates a new instance of BufferWriter.
+func NewBufferWriter() *BufferWriter {
+	return &BufferWriter{}
 }
 
-// WriteFile writes the data to the specified file.
-func (w *FileWriter) WriteFile(filename string, data []byte) error {
-	err := ioutil.WriteFile(filename, data, 0644)
+// WriteBuffer writes the data to the specified file.
+func (w *BufferWriter) WriteBuffer(filename string, data []byte) error {
+	file, err := os.Create(filename)
 	if err != nil {
-		return fmt.Errorf("failed to write file: %v", err)
+		return err
 	}
-	return nil
+	defer file.Close()
+	_, err = file.Write(data)
+	return err
 }
